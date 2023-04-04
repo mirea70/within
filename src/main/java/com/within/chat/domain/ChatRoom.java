@@ -2,8 +2,10 @@ package com.within.chat.domain;
 
 import com.within.chat.dto.ChatMessageDto;
 import com.within.chat.service.ChatService;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.web.socket.WebSocketSession;
 import javax.persistence.Id;
@@ -11,12 +13,16 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Getter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Document
 public class ChatRoom {
 
     @Id
     private String id;
     private String name;
+    @Builder.Default
     private Set<WebSocketSession> sessions = new HashSet<>();
 
     @Builder

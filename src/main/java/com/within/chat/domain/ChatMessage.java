@@ -3,6 +3,7 @@ package com.within.chat.domain;
 import com.within.chat.dto.ChatMessageDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -14,6 +15,7 @@ import javax.persistence.Id;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Getter
 public class ChatMessage {
     @Id
     private String id;
