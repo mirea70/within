@@ -4,27 +4,16 @@ import com.within.chat.domain.ChatRoom;
 import com.within.chat.domain.ChatRoomRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.UUID;
 
-//@SpringJUnitConfig(MongoTestConfiguration.class)
-//@EnableAutoConfiguration
-//@DataMongoTest
+import static org.junit.jupiter.api.Assertions.*;
+
 @SpringBootTest
 public class ChatRoomRepositoryTest {
     @Autowired
-//    @Qualifier("testMongoTemplate")
     private ChatRoomRepository chatRoomRepository;
 
     @Test
@@ -63,5 +52,37 @@ public class ChatRoomRepositoryTest {
         System.out.println("findChatRoom.getName() = " + findChatRoom.getName());
         System.out.println("expectName = " + expectName);
         assertEquals(expectId, findChatRoom.getId());
+    }
+    @Test
+    @DisplayName("채팅방 수정 테스트")
+    public void updateChatRoomTest() {
+        // given
+        String expectId = "97228625-c1c1-4160-b24e-411a82d5a3f2";
+        ChatRoom findChatRoom = chatRoomRepository.findById(expectId).orElseThrow();
+        // when
+        String changeName = "수정방2";
+        ChatRoom updateChatRoom = ChatRoom.builder()
+                .id(expectId)
+                .name(changeName)
+                .build();
+        ChatRoom changedChatRoom = chatRoomRepository.save(updateChatRoom);
+        // then
+        assertEquals(expectId, changedChatRoom.getId());
+        assertEquals(changeName, changedChatRoom.getName());
+        System.out.println("findChatRoom.getName() = " + findChatRoom.getName());
+        System.out.println("changedChatRoom.getName() = " + changedChatRoom.getName());
+    }
+
+    @Test
+    @DisplayName("채팅방 삭제 테스트")
+    public void deleteChatRoomTest() {
+        // given
+        String expectId = "29ddc86f-2758-4173-90ae-d3d2b4766164";
+        ChatRoom findChatRoom = chatRoomRepository.findById(expectId).orElseThrow();
+        System.out.println("findChatRoom.getId() = " + findChatRoom.getId());
+        // when
+        chatRoomRepository.delete(findChatRoom);
+        // then
+        assertFalse(chatRoomRepository.existsById(expectId));
     }
 }
