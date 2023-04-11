@@ -10,16 +10,16 @@ import java.util.List;
 @RestController
 @RequestMapping("/chat")
 @RequiredArgsConstructor
-public class ChatController {
+public class ChatRoomController {
     private final ChatService chatService;
 
     @PostMapping
-    public ChatRoom chatRoom(@RequestBody String name) {
+    public ChatRoom chatRoom(@RequestParam String name) {
         return chatService.creatRoom(name);
     }
 
     @GetMapping
-    public List<ChatRoom> findAllRoom() {
-        return chatService.findAllRoom();
+    public List<ChatRoom> findAllRooms() {
+        return chatService.findAllRooms();
     }
 }

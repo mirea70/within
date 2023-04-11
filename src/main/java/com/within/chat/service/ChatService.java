@@ -2,8 +2,11 @@ package com.within.chat.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.within.chat.domain.ChatRoom;
+import com.within.chat.domain.ChatRoomRepository;
+import com.within.chat.mapper.ChatRoomDtoMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
@@ -17,36 +20,26 @@ import java.util.*;
 @Service
 public class ChatService {
     private final ObjectMapper objectMapper;
-    private Map<String, ChatRoom> chatRooms;
+    private final ChatRoomRepository chatRoomRepository;
 
-    @PostConstruct
-    private void init() {
-        chatRooms = new LinkedHashMap<>();
-    }
-
-    public List<ChatRoom> findAllRoom() {
-        return new ArrayList<>(chatRooms.values());
+    public List<ChatRoom> findAllRooms() {
+        return chatRoomRepository.findAll(Sort.by("createdAt").descending());
     }
 
     public ChatRoom findRoomById(String roomId) {
-        return chatRooms.get(roomId);
+        return chatRoomRepository.findById(roomId).orElseThrow(
+                () -> new IllegalArgumentException("해당 채팅방은 존재하지 않습니다."));
     }
 
     public ChatRoom creatRoom(String name) {
-        String randomId = UUID.randomUUID().toString();
-        ChatRoom chatRoom = ChatRoom.builder()
-                .id(randomId)
-                .name(name)
-                .build();
-        chatRooms.put(randomId, chatRoom);
-        return chatRoom;
+        return ChatRoomDtoMapper.INSTANCE.toEntityByName(name);
     }
 
-    public <T> void sendMessage(WebSocketSession session, T message) {
-        try {
-            session.sendMessage(new TextMessage(objectMapper.writeValueAsString(message)));
-        } catch (IOException e) {
-            log.error(e.getMessage(), e);
-        }
-    }
+//    public <T> void sendMessage(WebSocketSession session, T message) {
+//        try {
+//            session.sendMessage(new TextMessage(objectMapper.writeValueAsString(message)));
+//        } catch (IOException e) {
+//            log.error(e.getMessage(), e);
+//        }
+//    }
 }
